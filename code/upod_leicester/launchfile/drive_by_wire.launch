@@ -1,0 +1,53 @@
+<!--*H
+Copyright 2017 Transport Systems Catapult (The Catapult)
+All rights reserved
+For use only for the purpose agreed with The Catapult
+H*-->
+
+<launch>
+
+<!-- ====================== --> 
+<!-- Launch args -->
+<!-- ================= --> 
+
+
+
+<!-- ============ --> 
+<!-- Launch nodes -->
+<!-- ============ -->
+
+
+<node pkg="cavlab_hw" type="turnigy_joy"
+		name="turnigy_joy" output="screen" />
+
+
+ <node pkg="cavlab_hw" type="dead_mans_handle" 
+     name="dmh_node" />
+     
+<node pkg="cavlab_core" type="demand_limiter"
+		 name="dmh_limit_node"
+		 args="pod_demand:=cavlab_core/pod_demand speed_limit:=cavlab_core/speed_limit _ratio:=true" />
+         
+<node pkg="cavlab_core" type="age_checker" 
+     name="age_checker_node"
+     args="pod_demand:=cavlab_core/pod_demand_limited speed_limit:=cavlab_core/speed_limit" />
+     
+<node pkg="cavlab_core" type="auxiliary_switch" 
+     name="auxiliary_switch_node"/>
+     
+<node pkg="cavlab_core" type="control_switch"
+		name="control_switch" output="screen"
+		args="_sources:=/cavlab_hw/turnigy_pod_demand;/b_acs/demand" />
+
+</launch>
+
+
+
+
+
+
+
+
+
+
+

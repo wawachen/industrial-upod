@@ -1,0 +1,37 @@
+<!--*H
+Copyright 2017 Transport Systems Catapult (The Catapult)
+All rights reserved
+For use only for the purpose agreed with The Catapult
+H*-->
+
+<launch>
+
+<!-- ====================== --> 
+<!-- Launch args -->
+<!-- ================= --> 
+
+
+#open rosserial port
+
+<node ns="arduino_compass" name="uno_arduino_compass" pkg="rosserial_python" type="serial_node.py"
+args="/dev/ttyACM0" output="screen" />
+
+
+<node pkg="connection" type="gps_compass.py"
+                       name="gps_compass" />
+
+
+<node pkg="b_acs" type="gps_to_local"
+		name="gps_to_local" />
+		
+</launch>
+
+
+
+
+
+
+
+
+
+

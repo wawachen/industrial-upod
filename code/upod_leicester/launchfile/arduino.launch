@@ -1,0 +1,41 @@
+<!--*H
+Copyright 2017 Transport Systems Catapult (The Catapult)
+All rights reserved
+For use only for the purpose agreed with The Catapult
+H*-->
+
+<launch>
+
+<!-- ==================== --> 
+<!-- Launch joystick node -->
+<!-- ==================== -->
+<arg name="maxsteer" value="0.5" />
+
+
+<node pkg="joy" type="joy_node"
+		name="joy"
+		args="_dev:=/dev/input/js0" />
+xbox joy ode
+<node pkg="cavlab_hw" type="xbox_joy" name="xbox_joy" 
+		output="screen" args="_max_steer:=$(arg maxsteer)" />
+
+         
+<node pkg="cavlab_core" type="age_checker" 
+     name="age_checker_node"
+     args="pod_demand:=cavlab_core/pod_demand speed_limit:=cavlab_core/speed_limit" />
+
+
+#control switch
+<node pkg="cavlab_core" type="control_switch"
+		name="control_switch" output="screen"
+		args="_sources:=/cavlab_hw/xbox_pod_demand;/b_acs/demand" />
+
+
+#auxiliary switch
+<node pkg="cavlab_core" type="auxiliary_switch"
+		name="auxiliary_switch" output="screen" />
+		
+
+		
+
+</launch>

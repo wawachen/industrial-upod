@@ -1,0 +1,66 @@
+<!--*H
+Copyright 2017 Transport Systems Catapult (The Catapult)
+All rights reserved
+For use only for the purpose agreed with The Catapult
+H*-->
+
+<launch>
+
+<!-- ====================== --> 
+<!-- Launch args -->
+<!-- ================= --> 
+
+<arg name="folder"/>
+<arg name="fencefile"/>
+<arg name="origin"/>
+<arg name="pathfile"/>
+<arg name="max_speed"/>
+
+#open rosserial port
+
+<node ns="arduino_compass" name="uno_arduino_compass" pkg="rosserial_python" type="serial_node.py"
+args="/dev/ttyACM0" output="screen" />
+
+
+<node pkg="connection" type="gps_compass.py"
+                       name="gps_compass" />
+
+<node pkg="cavlab_core" type="geofence" 
+     name="geofence_node"
+     args="_fence:=$(arg fencefile)" />
+
+<node pkg="b_acs" type="gps_to_local"
+		name="gps_to_local" />
+		
+<node pkg="b_acs" type="record_route"
+		name="record_route" 
+		args="_folder:=$(arg folder)"/>
+
+<node pkg="b_acs" type="path_replay"
+		name="path_replay"
+		args="_folder:=$(arg folder) _origin:=$(arg origin) _loop:=false" >
+                <param name="min_look_ahead_distance" type="double" value="$(arg replay_min_look_ahead_distance)" />
+        </node>
+
+
+<node pkg="b_acs" type="auto_demand"
+		name="auto_demand"/>
+
+ <node name="auto_demand_dynparam" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters auto_demand">
+    <param name="speed" type="double" value="$(arg max_speed)" />
+ </node>
+	
+
+		
+</launch>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,65 @@
+<!--*H
+Copyright 2018 Transport Systems Catapult (The Catapult)
+All rights reserved
+For use only for the purpose agreed with The Catapult
+H*-->
+
+<launch>
+	<arg name="folder"/>
+	<arg name="fencefile"/>
+	<arg name="origin"/>
+
+	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" >
+		</include>
+
+	<node pkg="cavlab_core" type="control_switch"
+			name="control_switch" output="screen"
+			args="_sources:=/b_acs/demand" />
+
+	<node pkg="b_acs" type="gps_to_local"
+		name="gps_to_local" />
+
+	<node pkg="b_acs" type="path_replay"
+		name="path_replay"
+		args="_folder:=$(arg folder) _origin:$(arg origin) _loop:=false"/>
+
+	<node pkg="b_acs" type="auto_demand"
+		name="auto_demand"/>
+
+	<node pkg="sim_pod" type="sim_pod" name="sim_pod"
+		args="pod_demand:=cavlab_core/pod_demand_limited">
+	</node>
+
+	<node pkg="cavlab_core" type="demand_limiter"
+		 name="demand_limiter"
+		 args="pod_demand:=cavlab_core/pod_demand speed_limit:=geofence_limit _ratio:=false" />
+
+	<node pkg="cavlab_core" type="geofence" name="geofence"
+		args="_fence:=$(arg fencefile)">
+	</node>
+</launch>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

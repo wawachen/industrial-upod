@@ -1,0 +1,68 @@
+<!--*H
+Copyright 2017 Transport Systems Catapult (The Catapult)
+All rights reserved
+For use only for the purpose agreed with The Catapult
+H*-->
+
+<launch>
+
+<!-- ====================== --> 
+<!-- Launch args -->
+<!-- ================= --> 
+
+<arg name="folder"/>
+<arg name="fencefile"/>
+<arg name="origin"/>
+<arg name="pathfile"/>
+<arg name="max_speed"/>
+
+
+<node pkg="cavlab_core" type="geofence" 
+     name="geofence_node"
+     args="_fence:=$(arg fencefile)" />
+
+<node pkg="cavlab_core" type="demand_limiter"
+		 name="geofence_limit_node"
+		 args="pod_demand:=cavlab_core/pod_demand speed_limit:=geofence_limit _ratio:=false
+		       cavlab_core/pod_demand_limited:=cavlab_core/pod_demand_geo_limited" />
+		    
+<node pkg="cavlab_core" type="demand_limiter"
+		 name="dmh_limit_node"
+		 args="pod_demand:=cavlab_core/pod_demand_geo_limited speed_limit:=cavlab_core/speed_limit _ratio:=true" />
+
+<node pkg="b_acs" type="gps_to_local"
+		name="gps_to_local" />
+		
+<node pkg="b_acs" type="record_route"
+		name="record_route" 
+		args="_folder:=$(arg folder)"/>
+
+<node pkg="b_acs" type="path_replay"
+		name="path_replay"
+		args="_folder:=$(arg folder) _origin:$(arg origin) _loop:=false"/>
+
+<node pkg="b_acs" type="auto_demand"
+		name="auto_demand"/>
+
+ <node name="auto_demand_dynparam" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters auto_demand">
+    <param name="speed" type="double" value="$(arg max_speed)" />
+ </node>
+		
+<node pkg="cavlab_hw" type="udp_client"
+		name="udp_node"/>
+		
+<node pkg="cavlab_hw" type="xnav550"
+		name="xnav550_node"/>
+		
+</launch>
+
+
+
+
+
+
+
+
+
+
+
